@@ -23,16 +23,4 @@ module.exports = {
             }
         ]
     }
-/*    plugins: [
-        new htmlWebpackPlugin({
-            filename: 'index.html',
-            template: 'MVVM.html',
-            title: '双向绑定',
-            inject: 'head',
-            minify: {
-                removeComments: true
-            }
-        }),
-    ]*/
-
 }
