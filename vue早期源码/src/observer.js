@@ -80,6 +80,7 @@ class Observer {
                     observer(newValue);
                 }
                 value = newValue;
+                log(dep);
                 dep.notify();
             }
         });

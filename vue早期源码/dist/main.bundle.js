@@ -87,6 +87,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+//观察者对象
 var Watcher = function () {
     function Watcher(vm, expression, callback) {
         _classCallCheck(this, Watcher);
@@ -97,6 +98,7 @@ var Watcher = function () {
         this.callback = callback;
         this.depIds = {};
         this.oldValue = this.get();
+        log('watch', this);
     }
 
     _createClass(Watcher, [{
@@ -253,6 +255,7 @@ var Observer = function () {
                         observer(newValue);
                     }
                     value = newValue;
+                    log(dep);
                     dep.notify();
                 }
             });
@@ -314,6 +317,7 @@ var Dep = function () {
     }, {
         key: 'notify',
         value: function notify() {
+            log('Dep.target', Dep);
             this.subs.forEach(function (sub) {
                 return sub.update();
             });
@@ -818,6 +822,7 @@ var MVVM = function () {
         key: '$watch',
         value: function $watch(expression, callback) {
             new _watcher2.default(this, expression, callback);
+            console.log(new _watcher2.default(this, expression, callback));
         }
     }, {
         key: '_proxy',
@@ -855,18 +860,28 @@ exports.arrayMethods = undefined;
 
 var _util = __webpack_require__(3);
 
+//遇到原生数组的原型
 var arrayProto = Array.prototype;
 var arrayMethods = exports.arrayMethods = Object.create(arrayProto);
 
+//不污染原型的情况下重写下列数组方法
 ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'].forEach(function (method) {
+
+    //缓存原生方法
     var original = arrayProto[method];
+
+    //覆盖原始方法
     (0, _util.def)(arrayMethods, method, function () {
         var i = arguments.length;
         var args = new Array(i);
         while (i--) {
             args[i] = arguments[i];
         }
+
+        // 调用原生的数组方法
         var result = original.apply(this, args);
+
+        //新插入元素需要重新observer
         var ob = this.__ob__;
         var inserted = void 0;
         switch (method) {
@@ -882,6 +897,7 @@ var arrayMethods = exports.arrayMethods = Object.create(arrayProto);
         }
         if (inserted) ob.observerArray(inserted);
 
+        //dep通知所有注册的观察者响应式处理
         ob.dep.notify();
         return result;
     });

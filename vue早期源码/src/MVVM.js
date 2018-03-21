@@ -18,6 +18,7 @@ class MVVM {
 
     $watch (expression, callback) {
         new Watcher(this, expression, callback);
+        console.log(new Watcher(this, expression, callback))
     }
 
     _proxy (key) {

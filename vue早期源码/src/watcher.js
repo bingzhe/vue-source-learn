@@ -1,5 +1,6 @@
 import Dep from './dep'
 
+//观察者对象
 export default class Watcher {
 
     constructor(vm, expression, callback) {
@@ -9,9 +10,10 @@ export default class Watcher {
         this.callback = callback;
         this.depIds = {};
         this.oldValue = this.get();
+        log('watch', this);        
     }
 
-    update () {
+    update() {
         let newValue = this.get();
         let oldValue = this.oldValue;
         if (newValue !== this.oldValue) {
@@ -20,21 +22,21 @@ export default class Watcher {
         }
     }
 
-    addDep (dep) {
+    addDep(dep) {
         if (!this.depIds.hasOwnProperty(dep.id)) {
             dep.addSub(this);
             this.depIds[dep.id] = dep;
         }
     }
 
-    get () {
+    get() {
         Dep.target = this;
         let value = this.getVMVal();
         Dep.target = null;
         return value;
     }
 
-    getVMVal () {
+    getVMVal() {
         let expression = this.expression.split('.');
         let value = this.vm;
         expression.forEach(function (curVal) {
