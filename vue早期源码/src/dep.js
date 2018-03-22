@@ -2,6 +2,7 @@ import Watcher from './watcher';
 
 let uid = 0;
 
+// 依赖收集类Dep
 export default class Dep {
     static target;
 
@@ -30,7 +31,6 @@ export default class Dep {
 
     // 通知所有订阅者
     notify() {
-        log('Dep.target', Dep);
         this.subs.forEach(sub => sub.update());
     }
 }

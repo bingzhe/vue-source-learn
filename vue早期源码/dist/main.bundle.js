@@ -184,11 +184,16 @@ function copyAugment(target, src, keys) {
 }
 
 function observer(data) {
+    //data不存在，或者data不是objuct时返回
     if (!data || (typeof data === 'undefined' ? 'undefined' : _typeof(data)) !== 'object') {
         return;
+
+        //data有__ob__属性并且 Observer.prototype是在data["__ob__"]的原型链上时返回
     } else if (data.hasOwnProperty("__ob__") && data["__ob__"] instanceof Observer) {
         return;
     }
+
+    //Observer data 
     return new Observer(data);
 }
 
@@ -214,7 +219,7 @@ var Observer = function () {
         value: function walk(data) {
             var self = this;
             Object.keys(this.data).forEach(function (key) {
-                self.defineReactice(data, key, data[key]);
+                self.defineReactive(data, key, data[key]);
             });
         }
     }, {
@@ -225,21 +230,29 @@ var Observer = function () {
             }
         }
     }, {
-        key: 'defineReactice',
-        value: function defineReactice(data, key, value) {
+        key: 'defineReactive',
+        value: function defineReactive(data, key, value) {
             var dep = new _dep2.default(),
-                descriptor = Object.getOwnPropertyDescriptor(data, key);
+
+            //取到属性的属性描述符
+            descriptor = Object.getOwnPropertyDescriptor(data, key);
+
+            //属性描述符存在并且属性描述符的configurable为false时返回，configurable为false时不能修改
             if (descriptor && !descriptor.configurable) {
                 return;
             }
 
+            //递归监听，是对象的时候返回new Observer(value), 否则undefined
             var childObserver = observer(value);
 
             Object.defineProperty(data, key, {
                 enumerable: true,
                 configurable: false,
                 get: function get() {
+
                     if (_dep2.default.target) {
+                        log("Dep.target.de", dep);
+                        // 为这个属性添加观察者watcher
                         dep.depend();
                         if (childObserver) {
                             childObserver.dep.depend();
@@ -252,10 +265,12 @@ var Observer = function () {
                         return;
                     }
                     if ((typeof newValue === 'undefined' ? 'undefined' : _typeof(newValue)) === 'object') {
+                        //观察新值
                         observer(newValue);
                     }
                     value = newValue;
-                    log(dep);
+                    // log('dep',dep);
+                    // 告诉所有订阅了这个属性的Watcher，数据更新了！
                     dep.notify();
                 }
             });
@@ -296,11 +311,17 @@ var Dep = function () {
         this.subs = [];
     }
 
+    //添加一个观察者对象
+
+
     _createClass(Dep, [{
         key: 'addSub',
         value: function addSub(sub) {
             this.subs.push(sub);
         }
+
+        // 移除一个观察者对象*
+
     }, {
         key: 'removeSub',
         value: function removeSub(sub) {
@@ -309,11 +330,17 @@ var Dep = function () {
                 this.subs.splice(index, 1);
             }
         }
+
+        // 依赖收集
+
     }, {
         key: 'depend',
         value: function depend() {
             Dep.target.addDep(this);
         }
+
+        // 通知所有订阅者
+
     }, {
         key: 'notify',
         value: function notify() {
@@ -810,6 +837,7 @@ var MVVM = function () {
         this.$options = options;
         this._data = this.$options.data;
         var self = this;
+        //data里的数据代理到vm上。
         Object.keys(this.$options.data).forEach(function (key) {
             _this._proxy(key);
         });
@@ -824,6 +852,9 @@ var MVVM = function () {
             new _watcher2.default(this, expression, callback);
             console.log(new _watcher2.default(this, expression, callback));
         }
+
+        //代理
+
     }, {
         key: '_proxy',
         value: function _proxy(key) {

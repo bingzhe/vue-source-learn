@@ -13,12 +13,18 @@ function copyAugment(target, src, keys) {
     }
 }
 
+
 export default function observer(data) {
+    //data不存在，或者data不是objuct时返回
     if (!data || typeof data !== 'object') {
         return;
+
+        //data有__ob__属性并且 Observer.prototype是在data["__ob__"]的原型链上时返回
     } else if (data.hasOwnProperty("__ob__") && data["__ob__"] instanceof Observer) {
         return;
     }
+
+    //Observer data 
     return new Observer(data);
 }
 
@@ -41,7 +47,7 @@ class Observer {
     walk(data) {
         let self = this;
         Object.keys(this.data).forEach(function (key) {
-            self.defineReactice(data, key, data[key]);
+            self.defineReactive(data, key, data[key]);
         });
     }
 
@@ -51,20 +57,27 @@ class Observer {
         }
     }
 
-    defineReactice(data, key, value) {
+    defineReactive(data, key, value) {
         let dep = new Dep(),
+            //取到属性的属性描述符
             descriptor = Object.getOwnPropertyDescriptor(data, key);
+
+        //属性描述符存在并且属性描述符的configurable为false时返回，configurable为false时不能修改
         if (descriptor && !descriptor.configurable) {
             return;
         }
 
+        //递归监听，是对象的时候返回new Observer(value), 否则undefined
         let childObserver = observer(value);
 
         Object.defineProperty(data, key, {
             enumerable: true,
             configurable: false,
             get: function () {
+                
                 if (Dep.target) {
+                    log("Dep.target.de", dep)
+                    // 为这个属性添加观察者watcher
                     dep.depend();
                     if (childObserver) {
                         childObserver.dep.depend();
@@ -77,10 +90,12 @@ class Observer {
                     return;
                 }
                 if (typeof newValue === 'object') {
+                    //观察新值
                     observer(newValue);
                 }
                 value = newValue;
-                log(dep);
+                // log('dep',dep);
+                // 告诉所有订阅了这个属性的Watcher，数据更新了！
                 dep.notify();
             }
         });

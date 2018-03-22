@@ -10,9 +10,10 @@ export default class Watcher {
         this.callback = callback;
         this.depIds = {};
         this.oldValue = this.get();
-        log('watch', this);        
+        log('watch', this);
     }
 
+    // 更新视图
     update() {
         let newValue = this.get();
         let oldValue = this.oldValue;
