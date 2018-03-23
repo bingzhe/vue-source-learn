@@ -96,11 +96,11 @@ var Watcher = function () {
         //vm实例
         this.vm = vm;
 
-        // 指令的表达式
+        // watch的属性
         this.expression = expression;
         this.callback = callback;
 
-        //订阅的属性id
+        //订阅的发布者属性id
         this.depIds = {};
         this.oldValue = this.get();
     }
@@ -118,6 +118,10 @@ var Watcher = function () {
                 this.callback.call(this.vm, newValue, oldValue);
             }
         }
+
+        //添加dep的id,
+        //在depIds中没有该dep.id时候，才添加该watch到触发了getter的数据的dep.subs中
+
     }, {
         key: 'addDep',
         value: function addDep(dep) {
@@ -126,6 +130,14 @@ var Watcher = function () {
                 this.depIds[dep.id] = dep;
             }
         }
+
+        //取observer了数据的value,会触发getter,
+        //在getter中会判断，Dep.target是否存在，存在，将该watchs添加到Dep的subs,
+        //访问到数据的dep,调用到dep.depend
+        //进一步调用到Watch的addDep
+        //相当于发布者的subs中把订阅了该属性的watch添加进去
+        //在该watch中的depIds添加了发布者的id
+
     }, {
         key: 'get',
         value: function get() {
@@ -134,6 +146,9 @@ var Watcher = function () {
             _dep2.default.target = null;
             return value;
         }
+
+        //取observer的data的value,这里会触发observer了数据的getter,
+
     }, {
         key: 'getVMVal',
         value: function getVMVal() {
@@ -166,6 +181,8 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+//arrayMethods是劫持了数组方法的对象
+
 
 exports.default = observer;
 
@@ -181,10 +198,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+//数组的原型继承
 function protoAugment(target, src) {
     target.__proto__ = src;
 }
-
+//赋值继承
 function copyAugment(target, src, keys) {
     for (var i = 0; i < keys.length; i++) {
         (0, _util.def)(target, key[i], src[key[i]]);
@@ -214,13 +232,19 @@ var Observer = function () {
         this.data = data;
 
         if (Array.isArray(data)) {
+            // 是数组是时候
             var argment = data.__proto__ ? protoAugment : copyAugment;
+            //用劫持的对象覆盖数组原型
             argment(data, _array.arrayMethods, Object.keys(_array.arrayMethods));
+            //observer arrray
             this.observerArray(data);
         } else {
             this.walk(data);
         }
     }
+
+    //递归observer
+
 
     _createClass(Observer, [{
         key: 'walk',
@@ -457,7 +481,7 @@ var Compiler = function () {
         value: function createFragment(el) {
             var fragment = document.createDocumentFragment(),
                 child;
-
+            console.log(el);
             while (child = el.firstChild) {
                 fragment.appendChild(child);
             }
@@ -859,7 +883,6 @@ var MVVM = function () {
         key: '$watch',
         value: function $watch(expression, callback) {
             new _watcher2.default(this, expression, callback);
-            debugger;
             // console.log(new Watcher(this, expression, callback))
             log(new _watcher2.default(this, expression, callback));
         }

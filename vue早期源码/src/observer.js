@@ -1,12 +1,13 @@
 import Dep from './dep';
 import { def } from './util';
+//arrayMethods是劫持了数组方法的对象
 import { arrayMethods } from './array';
 
-
+//数组的原型继承
 function protoAugment(target, src) {
     target.__proto__ = src;
 }
-
+//赋值继承
 function copyAugment(target, src, keys) {
     for (let i = 0; i < keys.length; i++) {
         def(target, key[i], src[key[i]]);
@@ -35,8 +36,11 @@ class Observer {
         this.data = data;
 
         if (Array.isArray(data)) {
+            // 是数组是时候
             const argment = data.__proto__ ? protoAugment : copyAugment;
+            //用劫持的对象覆盖数组原型
             argment(data, arrayMethods, Object.keys(arrayMethods));
+            //observer arrray
             this.observerArray(data);
         } else {
             this.walk(data);
@@ -44,6 +48,7 @@ class Observer {
 
     }
 
+    //递归observer
     walk(data) {
         let self = this;
         Object.keys(this.data).forEach(function (key) {

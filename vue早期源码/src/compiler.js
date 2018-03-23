@@ -264,7 +264,7 @@ const directiveUtil = {
                 } else {
                     params.push(vm[name]);
                 }
-                
+
             }
             node.addEventListener(eventType[1], function () {
                 fn.apply(vm, params);
