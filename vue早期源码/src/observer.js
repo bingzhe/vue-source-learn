@@ -61,6 +61,7 @@ class Observer {
         let dep = new Dep(),
             //取到属性的属性描述符
             descriptor = Object.getOwnPropertyDescriptor(data, key);
+        log("dep:", dep, data, key, value);
 
         //属性描述符存在并且属性描述符的configurable为false时返回，configurable为false时不能修改
         if (descriptor && !descriptor.configurable) {
@@ -74,9 +75,8 @@ class Observer {
             enumerable: true,
             configurable: false,
             get: function () {
-                
+
                 if (Dep.target) {
-                    log("Dep.target.de", dep)
                     // 为这个属性添加观察者watcher
                     dep.depend();
                     if (childObserver) {

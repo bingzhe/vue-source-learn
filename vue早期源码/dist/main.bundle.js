@@ -93,13 +93,17 @@ var Watcher = function () {
         _classCallCheck(this, Watcher);
 
         this.callback = callback;
+        //vm实例
         this.vm = vm;
+        // 指令的表达式
         this.expression = expression;
         this.callback = callback;
         this.depIds = {};
         this.oldValue = this.get();
-        log('watch', this);
     }
+
+    // 更新视图
+
 
     _createClass(Watcher, [{
         key: 'update',
@@ -132,8 +136,13 @@ var Watcher = function () {
         value: function getVMVal() {
             var expression = this.expression.split('.');
             var value = this.vm;
-            expression.forEach(function (curVal) {
-                value = value[curVal];
+            // log("vm:", value);
+            // expression.forEach(function (curVal) {
+            //     value = value[curVal];
+            // });
+            // log('expression', this.expression);
+            expression.forEach(function (val) {
+                value = value[val];
             });
             return value;
         }
@@ -236,6 +245,7 @@ var Observer = function () {
 
             //取到属性的属性描述符
             descriptor = Object.getOwnPropertyDescriptor(data, key);
+            log("dep:", dep, data, key, value);
 
             //属性描述符存在并且属性描述符的configurable为false时返回，configurable为false时不能修改
             if (descriptor && !descriptor.configurable) {
@@ -251,7 +261,6 @@ var Observer = function () {
                 get: function get() {
 
                     if (_dep2.default.target) {
-                        log("Dep.target.de", dep);
                         // 为这个属性添加观察者watcher
                         dep.depend();
                         if (childObserver) {
@@ -303,12 +312,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var uid = 0;
 
+// 依赖收集类Dep
+
 var Dep = function () {
     function Dep() {
         _classCallCheck(this, Dep);
 
         this.id = uid++;
         this.subs = [];
+        log('uid:', uid);
+        log('Dep.id:', this.id);
     }
 
     //添加一个观察者对象
@@ -344,7 +357,6 @@ var Dep = function () {
     }, {
         key: 'notify',
         value: function notify() {
-            log('Dep.target', Dep);
             this.subs.forEach(function (sub) {
                 return sub.update();
             });

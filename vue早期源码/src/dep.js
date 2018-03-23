@@ -9,6 +9,8 @@ export default class Dep {
     constructor() {
         this.id = uid++;
         this.subs = [];
+        // log('uid:', uid);
+        // log('Dep.id:', this.id);
     }
 
     //添加一个观察者对象

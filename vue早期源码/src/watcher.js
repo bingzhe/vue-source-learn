@@ -5,12 +5,13 @@ export default class Watcher {
 
     constructor(vm, expression, callback) {
         this.callback = callback;
+        //vm实例
         this.vm = vm;
+        // 指令的表达式
         this.expression = expression;
         this.callback = callback;
         this.depIds = {};
         this.oldValue = this.get();
-        log('watch', this);
     }
 
     // 更新视图
@@ -40,9 +41,14 @@ export default class Watcher {
     getVMVal() {
         let expression = this.expression.split('.');
         let value = this.vm;
-        expression.forEach(function (curVal) {
-            value = value[curVal];
-        });
+        // log("vm:", value);
+        // expression.forEach(function (curVal) {
+        //     value = value[curVal];
+        // });
+        // log('expression', this.expression);
+        expression.forEach(val => {
+            value = value[val];
+        })
         return value;
     }
 }

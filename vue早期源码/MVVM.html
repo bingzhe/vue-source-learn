@@ -62,12 +62,7 @@
         </p>
         <button v-on:click="change">vue无法监听下标改变数组</button>
         <button v-on:click="addItem('1111')">用push给数组增加长度</button>
-        <!--          <p>
-            <h3>v-for</h3>
-            <ul>
-                <li v-for="item in array">{{item}}</li>
-            </ul>
-        </p> -->
+
     </div>
 </body>
 <script>
@@ -87,12 +82,10 @@
         methods: {
             changeclass: function (e) {
                 var rand = Math.round(Math.random() * 1000000);
-                console.log(e.target.previousSibling.previousSibling)
                 e.target.style.backgroundColor = '#' + rand
             },
             addItem: function (value) {
                 this.array.push(value);
-                console.log(this.array);
             },
             change: function () {
                 this.array[0] = "vue无法监听到这次改变"
