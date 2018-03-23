@@ -87,7 +87,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-//观察者对象
+//观察者对象，订阅者
 var Watcher = function () {
     function Watcher(vm, expression, callback) {
         _classCallCheck(this, Watcher);
@@ -95,9 +95,12 @@ var Watcher = function () {
         this.callback = callback;
         //vm实例
         this.vm = vm;
+
         // 指令的表达式
         this.expression = expression;
         this.callback = callback;
+
+        //订阅的属性id
         this.depIds = {};
         this.oldValue = this.get();
     }
@@ -136,11 +139,7 @@ var Watcher = function () {
         value: function getVMVal() {
             var expression = this.expression.split('.');
             var value = this.vm;
-            // log("vm:", value);
-            // expression.forEach(function (curVal) {
-            //     value = value[curVal];
-            // });
-            // log('expression', this.expression);
+
             expression.forEach(function (val) {
                 value = value[val];
             });
@@ -312,7 +311,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var uid = 0;
 
-// 依赖收集类Dep
+// 依赖收集类Dep,发布者
 
 var Dep = function () {
     function Dep() {
@@ -320,11 +319,9 @@ var Dep = function () {
 
         this.id = uid++;
         this.subs = [];
-        log('uid:', uid);
-        log('Dep.id:', this.id);
     }
 
-    //添加一个观察者对象
+    //添加一个订阅者对象
 
 
     _createClass(Dep, [{
@@ -333,7 +330,7 @@ var Dep = function () {
             this.subs.push(sub);
         }
 
-        // 移除一个观察者对象*
+        // 移除一个订阅者对象*
 
     }, {
         key: 'removeSub',
@@ -344,7 +341,7 @@ var Dep = function () {
             }
         }
 
-        // 依赖收集
+        // 依赖收集,根据依赖添加订阅者
 
     }, {
         key: 'depend',
@@ -862,7 +859,9 @@ var MVVM = function () {
         key: '$watch',
         value: function $watch(expression, callback) {
             new _watcher2.default(this, expression, callback);
-            console.log(new _watcher2.default(this, expression, callback));
+            debugger;
+            // console.log(new Watcher(this, expression, callback))
+            log(new _watcher2.default(this, expression, callback));
         }
 
         //代理

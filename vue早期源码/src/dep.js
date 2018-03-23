@@ -2,23 +2,21 @@ import Watcher from './watcher';
 
 let uid = 0;
 
-// 依赖收集类Dep
+// 依赖收集类Dep,发布者
 export default class Dep {
     static target;
 
     constructor() {
         this.id = uid++;
         this.subs = [];
-        // log('uid:', uid);
-        // log('Dep.id:', this.id);
     }
 
-    //添加一个观察者对象
+    //添加一个订阅者对象
     addSub(sub) {
         this.subs.push(sub);
     }
 
-    // 移除一个观察者对象*
+    // 移除一个订阅者对象*
     removeSub(sub) {
         let index = this.subs.indexOf(sub);
         if (index != -1) {
@@ -26,7 +24,7 @@ export default class Dep {
         }
     }
 
-    // 依赖收集
+    // 依赖收集,根据依赖添加订阅者
     depend() {
         Dep.target.addDep(this);
     }

@@ -19,7 +19,8 @@ class MVVM {
 
     $watch(expression, callback) {
         new Watcher(this, expression, callback);
-        console.log(new Watcher(this, expression, callback))
+        // console.log(new Watcher(this, expression, callback))
+        log(new Watcher(this, expression, callback))
     }
 
     //代理
