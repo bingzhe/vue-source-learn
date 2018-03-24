@@ -24,6 +24,7 @@ export default class Compiler {
         var fragment = document.createDocumentFragment(),
             child;
 
+        //遍历原始node子节点，会删除文档树中该dom节点，并且加入生成dom片段中。
         while (child = el.firstChild) {
             fragment.appendChild(child);
         }
@@ -40,8 +41,10 @@ export default class Compiler {
             var reg = /\{\{(.*)\}\}/g;
 
             if (self.isElementNode(node)) {
+                //node类型为元素
                 self.compileNodeAttr(node);
             } else if (self.isTextNode(node) && reg.test(text)) {
+                //node类型为文本，且存在{{data}}文本
                 self.compileText(node);
             }
         });
@@ -55,22 +58,31 @@ export default class Compiler {
 
         [].slice.call(nodeAttrs).forEach(function (attr) {
             let attrName = attr.name;
+            //是vue指令
             if (self.isDirective(attrName)) {
+                //expression就是属性的值，v-if="data"中的data
                 let expression = attr.value;
-                // directicve
+                // directicve 指令名称， v-if="data"中的if
                 let directive = attrName.substring(2);
+
                 if (directive === 'for') {
+                    //处理v-for
                     lazyComplier = directive;
                     lazyExp = expression;
                 } else if (self.isEventDirective(directive)) {
+                    //处理on
+                    // 为该node绑定事件
                     directiveUtil.addEvent(node, self.$vm, directive, expression);
                 } else {
+                    //为该node解析指令(不包含for)
                     directiveUtil[directive] && directiveUtil[directive](node, self.$vm, expression);
                 }
+                // 处理完指令后将其移出（我们F12查看元素是没有指令的）
                 node.removeAttribute(attrName);
             }
         });
 
+        //for指令在这里处理
         if (lazyComplier === 'for') {
             directiveUtil[lazyComplier] && directiveUtil[lazyComplier](node, this.$vm, lazyExp);
         } else if (node.childNodes && node.childNodes.length) {
@@ -103,7 +115,7 @@ export default class Compiler {
     }
 
     parseText(text) {
-
+        //不存在需要解析的文本，直接返回
         if (!tagRE.test(text)) {
             return;
         }
