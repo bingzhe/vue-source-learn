@@ -285,6 +285,8 @@ const directiveUtil = {
     },
 
     _getVMVal: function (vm, expression) {
+        log('expression', expression);
+
         expression = expression.trim();
         let value = vm;
         expression = expression.split('.');
@@ -322,6 +324,7 @@ const cacheDiv = document.createElement('div');
 
 const updater = {
     textUpdater: function (node, value) {
+        // v-text指令
         node.textContent = typeof value === 'undefined' ? '' : value;
     },
 
@@ -355,6 +358,7 @@ const updater = {
             }
 
         } else {
+            // v-html指令
             node.innerHTML = typeof value === 'undefined' ? '' : value;
         }
     },

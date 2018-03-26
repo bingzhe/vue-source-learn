@@ -538,10 +538,11 @@ var Compiler = function () {
                         directiveUtil[directive] && directiveUtil[directive](node, self.$vm, expression);
                     }
                     // 处理完指令后将其移出（我们F12查看元素是没有指令的）
-                    // node.removeAttribute(attrName);
+                    node.removeAttribute(attrName);
                 }
             });
 
+            //for指令在这里处理
             if (lazyComplier === 'for') {
                 directiveUtil[lazyComplier] && directiveUtil[lazyComplier](node, this.$vm, lazyExp);
             } else if (node.childNodes && node.childNodes.length) {
@@ -577,7 +578,7 @@ var Compiler = function () {
     }, {
         key: 'parseText',
         value: function parseText(text) {
-
+            //不存在需要解析的文本，直接返回
             if (!tagRE.test(text)) {
                 return;
             }
@@ -761,6 +762,8 @@ var directiveUtil = {
     },
 
     _getVMVal: function _getVMVal(vm, expression) {
+        log('expression', expression);
+
         expression = expression.trim();
         var value = vm;
         expression = expression.split('.');
@@ -797,6 +800,7 @@ var cacheDiv = document.createElement('div');
 
 var updater = {
     textUpdater: function textUpdater(node, value) {
+        // v-text指令
         node.textContent = typeof value === 'undefined' ? '' : value;
     },
 
@@ -829,6 +833,7 @@ var updater = {
                 node.$doms = doms;
             }
         } else {
+            // v-html指令
             node.innerHTML = typeof value === 'undefined' ? '' : value;
         }
     },
