@@ -43,6 +43,7 @@ export default class Compiler {
             if (self.isElementNode(node)) {
                 //node类型为元素
                 self.compileNodeAttr(node);
+
             } else if (self.isTextNode(node) && reg.test(text)) {
                 //node类型为文本，且存在{{data}}文本
                 self.compileText(node);
@@ -95,7 +96,9 @@ export default class Compiler {
         let fragment = document.createDocumentFragment();
         tokens.forEach(token => {
             let el;
+            //是模板字符串
             if (token.tag) {
+                //是text还是html
                 if (token.html) {
                     el = document.createDocumentFragment();
                     el.$parent = node.parentNode;
@@ -120,9 +123,14 @@ export default class Compiler {
             return;
         }
         const tokens = [];
+
+        //下次匹配的起始索引
         let lastIndex = tagRE.lastIndex = 0;
+
         let match, index, html, value;
+
         while (match = tagRE.exec(text)) {
+            //匹配到哦{{}} 或者 {{{}}}在文本中的位置
             index = match.index;
             // 先把{{}} 或者 {{{}}} 之前的文本提取
             if (index > lastIndex) {
@@ -130,6 +138,7 @@ export default class Compiler {
                     value: text.slice(lastIndex, index)
                 });
             }
+            //html解析还是text解析
             html = htmlRE.test(match[0]);
             value = html ? match[1] : match[2];
             tokens.push({
@@ -166,6 +175,7 @@ export default class Compiler {
 }
 
 
+//指令处理
 const directiveUtil = {
     text: function (node, vm, expression) {
         this.bind(node, vm, expression, 'text');

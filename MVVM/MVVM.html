@@ -31,20 +31,21 @@
         <p>{{array.length}}</p>  
     </div> -->
     <div id="app">
-        <p>
+        <!-- <p>
             <h3>v-model</h3>
             <input type="text" v-model="formodel"> {{formodel}}
-        </p>
+        </p> -->
         <p>
             <h3>v-text</h3>
-            <p v-text="fortext"></p>
-            {{fortext}}
+            <p v-text="text"></p>
+            {{text}}
         </p>
         <p>
             <h3>v-html</h3>
             <p v-html="forhtml"></p>
             {{{forhtml}}}
         </p>
+        <!-- 
         <p>
             <h3>v-on</h3>
             <button v-on:click="changeclass">点击更换颜色</button>
@@ -61,7 +62,13 @@
             </ul>
         </p>
         <button v-on:click="change">vue无法监听下标改变数组</button>
-        <button v-on:click="addItem('1111')">用push给数组增加长度</button>
+        <button v-on:click="addItem('1111')">用push给数组增加长度</button> -->
+        <p>
+            <h3>v-for</h3>
+            <ul>
+                <li v-for="item in arrayObj">{{item.label}}</li>
+            </ul>
+        </p>
 
     </div>
 </body>
@@ -74,10 +81,17 @@
         el: '#app',
         data: {
             formodel: 'this is for v-model',
-            fortext: 'this is for v-text',
+            text: 'this is for v-text',
             forhtml: '<span style="color: #f00;">我是v-html指令的结果</span><span></spam>',
             red: 'red',
-            array: ["sdf", "sdfd"]
+            array: ["sdf", "sdfd"],
+            arrayObj: [{
+                label: "ss",
+                value: 1,
+            }, {
+                label: "ss2",
+                value: 2,
+            }],
         },
         methods: {
             changeclass: function (e) {
@@ -95,27 +109,6 @@
 
     log(vm);
 
-        // console.log(rand)
-        // let vm = new MVVM({
-        //     el: '#app',
-        //     data: {
-        //         firstName: "hello ",
-        //         htmlStr: '<span style="color: #f00;">我是v-html指令的结果</span><span></spam>',
-        //         child: {
-        //             lastName: ' World !'
-        //         },
-        //         array: ["sdf","sdfd"]
-        //     },
-        //     methods: {
-        //         clickBtn: function (e) {
-        //             this.array[0] = "dfsdf";
-        //         },
-        //         addItem: function (value) {
-        //             this.array.push(value);
-        //             console.log(this.array);
-        //         }
-        //     }
-        // });
 </script>
 
 </html>

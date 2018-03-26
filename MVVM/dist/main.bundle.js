@@ -583,12 +583,18 @@ var Compiler = function () {
                 return;
             }
             var tokens = [];
+
+            //下次匹配的起始索引
             var lastIndex = tagRE.lastIndex = 0;
+
             var match = void 0,
                 index = void 0,
                 html = void 0,
                 value = void 0;
+            debugger;
+
             while (match = tagRE.exec(text)) {
+                //匹配到哦{{}} 或者 {{{}}}在文本中的位置
                 index = match.index;
                 // 先把{{}} 或者 {{{}}} 之前的文本提取
                 if (index > lastIndex) {
@@ -596,6 +602,7 @@ var Compiler = function () {
                         value: text.slice(lastIndex, index)
                     });
                 }
+                //html解析还是text解析
                 html = htmlRE.test(match[0]);
                 value = html ? match[1] : match[2];
                 tokens.push({
@@ -638,9 +645,10 @@ var Compiler = function () {
     return Compiler;
 }();
 
+//指令处理
+
+
 exports.default = Compiler;
-
-
 var directiveUtil = {
     text: function text(node, vm, expression) {
         this.bind(node, vm, expression, 'text');
