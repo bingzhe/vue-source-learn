@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script>
+        var log = console.log.bind(console);
+    </script>
+    <script src="./vue-2.5.16/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        {{ message }}
+        <span @click="log2">点点</span>
+        <my-component ref="childComponent"></my-component>
+    </div>
+    <script>
+        // 注册
+        Vue.component('my-component', {
+            template: '<div @click="child">我是子组件</div>',
+            created() {
+                console.log(this);
+            },
+            methods: {
+                child() {
+                    log('子组件');
+                    this.$emit('click-child')
+                }
+            }
+        })
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue!'
+            },
+            beforeCreate() { },
+            created() {
+                log("1");
+                console.log(this);
+                this.$on('on-cha', () => {
+                    
+                })
+            },
+            methods: {
+                log2() {
+                    log("2");
+                    this.$refs.childComponent.$on("click-child", this.log4)
+                },
+                log3() {
+                    log("3");
+                },
+                log4() {
+                    log("4");
+                }
+            }
+        })
+
+
+    </script>
+</body>
+
+</html>
