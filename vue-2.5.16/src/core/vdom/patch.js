@@ -32,6 +32,7 @@ export const emptyNode = new VNode('', {}, [])
 
 const hooks = ['create', 'activate', 'update', 'remove', 'destroy']
 
+// 判断两个VNode节点是否是同一个节点
 function sameVnode (a, b) {
   return (
     a.key === b.key && (
@@ -49,6 +50,7 @@ function sameVnode (a, b) {
   )
 }
 
+//判断是<input>的时候，type是否相同或者都属于text,number,password,search,email,tel,url这几种type,
 function sameInputType (a, b) {
   if (a.tag !== 'input') return true
   let i
@@ -57,6 +59,7 @@ function sameInputType (a, b) {
   return typeA === typeB || isTextInputType(typeA) && isTextInputType(typeB)
 }
 
+// 生成一个key与旧VNode的key对应索引
 function createKeyToOldIdx (children, beginIdx, endIdx) {
   let i, key
   const map = {}
@@ -67,6 +70,7 @@ function createKeyToOldIdx (children, beginIdx, endIdx) {
   return map
 }
 
+// 创建Patch方法
 export function createPatchFunction (backend) {
   let i, j
   const cbs = {}
@@ -96,6 +100,7 @@ export function createPatchFunction (backend) {
     return remove
   }
 
+  // 将某个el节点从文档中移除
   function removeNode (el) {
     const parent = nodeOps.parentNode(el)
     // element may have already been removed due to v-html / v-text
@@ -122,6 +127,7 @@ export function createPatchFunction (backend) {
 
   let creatingElmInVPre = 0
 
+  // 创建一个节点
   function createElm (
     vnode,
     insertedVnodeQueue,
@@ -141,6 +147,7 @@ export function createPatchFunction (backend) {
     }
 
     vnode.isRootInsert = !nested // for transition enter check
+    // 创建一个组件节点
     if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
       return
     }
