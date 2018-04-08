@@ -65,6 +65,7 @@ if (process.env.NODE_ENV !== 'production') {
     return res
   }
 
+  //生成组件的继承关系
   generateComponentTrace = vm => {
     if (vm._isVue && vm.$parent) {
       const tree = []
