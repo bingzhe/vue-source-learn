@@ -4,10 +4,11 @@ export const emptyObject = Object.freeze({})
 
 // these helpers produces better vm code in JS engines due to their
 // explicitness and function inlining
+//未定义
 export function isUndef (v: any): boolean %checks {
   return v === undefined || v === null
 }
-
+//已定义
 export function isDef (v: any): boolean %checks {
   return v !== undefined && v !== null
 }
@@ -74,6 +75,7 @@ export function isValidArrayIndex (val: any): boolean {
 /**
  * Convert a value to a string that is actually rendered.
  */
+//null 和 undefined 转成空字符转，对象转成格式化的JSON字符串，其他调用String()
 export function toString (val: any): string {
   return val == null
     ? ''
@@ -207,6 +209,7 @@ export const bind = Function.prototype.bind
 /**
  * Convert an Array-like object to a real Array.
  */
+// 将类数组的对象转换成数组
 export function toArray (list: any, start?: number): Array<any> {
   start = start || 0
   let i = list.length - start
@@ -229,6 +232,7 @@ export function extend (to: Object, _from: ?Object): Object {
 
 /**
  * Merge an Array of Objects into a single Object.
+ * 合并Array数组中的每一个对象到一个Object中
  */
 export function toObject (arr: Array<any>): Object {
   const res = {}
@@ -269,6 +273,7 @@ export function genStaticKeys (modules: Array<ModuleOptions>): string {
 /**
  * Check if two values are loosely equal - that is,
  * if they are plain objects, do they have the same shape?
+ * 检测两个变量是否相等
  */
 export function looseEqual (a: any, b: any): boolean {
   if (a === b) return true
