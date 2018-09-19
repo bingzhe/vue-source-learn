@@ -252,7 +252,9 @@ function checkComponents (options: Object) {
   }
 }
 
+//校验组件名
 export function validateComponentName (name: string) {
+  //限定名字由普通的字符和中横线(-)组成，且必须以字母开头。
   if (!/^[a-zA-Z][\w-]*$/.test(name)) {
     warn(
       'Invalid component name: "' + name + '". Component names ' +
@@ -260,6 +262,7 @@ export function validateComponentName (name: string) {
       'and must start with a letter.'
     )
   }
+  //检查是否是内置的标签，或者内置的属性
   if (isBuiltInTag(name) || config.isReservedTag(name)) {
     warn(
       'Do not use built-in or reserved HTML elements as component ' +
@@ -271,6 +274,7 @@ export function validateComponentName (name: string) {
 /**
  * Ensure all props option syntax are normalized into the
  * Object-based format.
+ * 规范props
  */
 function normalizeProps (options: Object, vm: ?Component) {
   const props = options.props
@@ -279,6 +283,7 @@ function normalizeProps (options: Object, vm: ?Component) {
   let i, val, name
   if (Array.isArray(props)) {
     i = props.length
+    // --递减前返回，处理数组所有选项
     while (i--) {
       val = props[i]
       if (typeof val === 'string') {
@@ -308,6 +313,7 @@ function normalizeProps (options: Object, vm: ?Component) {
 
 /**
  * Normalize all injections into Object-based format
+ * 规范inject
  */
 function normalizeInject (options: Object, vm: ?Component) {
   const inject = options.inject
@@ -361,23 +367,28 @@ function assertObjectType (name: string, value: any, vm: ?Component) {
 /**
  * Merge two option objects into a new one.
  * Core utility used in both instantiation and inheritance.
+ * 合并两个选项对象为一个新的对象，这个函数在实例化和继承的时候都有用到
  */
 export function mergeOptions (
   parent: Object,
   child: Object,
   vm?: Component
 ): Object {
+  //校验组件名
   if (process.env.NODE_ENV !== 'production') {
     checkComponents(child)
   }
 
+  //允许合并另一个实例构造者的选项
   if (typeof child === 'function') {
     child = child.options
   }
 
+  //规范化选项的函数调用
   normalizeProps(child, vm)
   normalizeInject(child, vm)
   normalizeDirectives(child)
+
   const extendsFrom = child.extends
   if (extendsFrom) {
     parent = mergeOptions(parent, extendsFrom, vm)

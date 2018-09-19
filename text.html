@@ -22,6 +22,7 @@
     </div>
     <script>
         // 注册
+        Vue.config.performance = true;
         Vue.component('my-component', {
             template: '<div @click="child">我是子组件</div>',
             created() {

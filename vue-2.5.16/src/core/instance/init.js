@@ -18,6 +18,7 @@ export function initMixin (Vue: Class<Component>) {
     // a uid
     vm._uid = uid++
 
+    //组件初始化性能追踪，开始标记
     let startTag, endTag
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
@@ -27,6 +28,7 @@ export function initMixin (Vue: Class<Component>) {
     }
 
     // a flag to avoid this being observed
+    // 标志是Vue组件，避免被观测
     vm._isVue = true
     // merge options
     if (options && options._isComponent) {
@@ -58,6 +60,7 @@ export function initMixin (Vue: Class<Component>) {
     initProvide(vm) // resolve provide after data/props
     callHook(vm, 'created')
 
+    //组件初始化性能追踪，结束标记
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
       vm._name = formatComponentName(vm, false)
@@ -92,6 +95,7 @@ export function initInternalComponent (vm: Component, options: InternalComponent
   }
 }
 
+// 获取当前实例构造者的 options 属性
 export function resolveConstructorOptions (Ctor: Class<Component>) {
   let options = Ctor.options
   if (Ctor.super) {
