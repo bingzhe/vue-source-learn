@@ -29,6 +29,9 @@ const strats = config.optionMergeStrategies
 
 /**
  * Options with restrictions
+ * 通过判断是否存在 vm 就能够得知 mergeOptions 
+ * 是在实例化时调用(使用 new 操作符走 _init 方法)
+ * 还是在继承时调用(Vue.extend)
  */
 if (process.env.NODE_ENV !== 'production') {
   strats.el = strats.propsData = function (parent, child, vm, key) {
@@ -55,6 +58,8 @@ function mergeData (to: Object, from: ?Object): Object {
     fromVal = from[key]
     if (!hasOwn(to, key)) {
       set(to, key, fromVal)
+      //如果from对象中的key也在to对象中，而且两个属性的值都是纯
+      //对象则递归进行深度合并
     } else if (isPlainObject(toVal) && isPlainObject(fromVal)) {
       mergeData(toVal, fromVal)
     }
@@ -83,6 +88,7 @@ export function mergeDataOrFn (
     // merged result of both functions... no need to
     // check if parentVal is a function here because
     // it has to be a function to pass previous merges.
+    //返回mergedDateFn函数
     return function mergedDataFn () {
       return mergeData(
         typeof childVal === 'function' ? childVal.call(this, this) : childVal,
@@ -90,6 +96,7 @@ export function mergeDataOrFn (
       )
     }
   } else {
+    //合并处理的是非子组件的选项时data函数为mergedInstanceDataFn函数
     return function mergedInstanceDataFn () {
       // instance merge
       const instanceData = typeof childVal === 'function'
@@ -113,6 +120,7 @@ strats.data = function (
   vm?: Component
 ): ?Function {
   if (!vm) {
+    //子组件data必须是函数返回
     if (childVal && typeof childVal !== 'function') {
       process.env.NODE_ENV !== 'production' && warn(
         'The "data" option should be a function ' +
@@ -389,6 +397,7 @@ export function mergeOptions (
   normalizeInject(child, vm)
   normalizeDirectives(child)
 
+  //处理expends和mixins选项。
   const extendsFrom = child.extends
   if (extendsFrom) {
     parent = mergeOptions(parent, extendsFrom, vm)
@@ -398,6 +407,7 @@ export function mergeOptions (
       parent = mergeOptions(parent, child.mixins[i], vm)
     }
   }
+
   const options = {}
   let key
   for (key in parent) {
